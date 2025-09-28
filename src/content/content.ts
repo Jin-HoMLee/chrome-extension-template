@@ -1,0 +1,298 @@
+// Content script for Chrome Extension Template
+// This script runs in the context of web pages and can interact with the DOM
+
+import { ExtensionMessage, MessageType } from '@/types/messages';
+import { StorageService } from '@/utils/storage';
+
+class ContentScript {
+  private isInitialized = false;
+  private settings: any = {};
+
+  constructor() {
+    this.init();
+  }
+
+  private async init() {
+    if (this.isInitialized) return;
+
+    console.log('Content script initializing on:', window.location.href);
+
+    try {
+      // Load settings
+      this.settings = (await StorageService.getItem('settings')) || {};
+
+      // Only proceed if extension is enabled
+      if (!this.settings.enabled) {
+        console.log('Extension is disabled, content script will not run');
+        return;
+      }
+
+      this.setupMessageListener();
+      this.injectStyles();
+      this.setupFeatures();
+
+      this.isInitialized = true;
+      console.log('Content script initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize content script:', error);
+    }
+  }
+
+  private setupMessageListener() {
+    // Listen for messages from popup or background script
+    chrome.runtime.onMessage.addListener((message: ExtensionMessage, sender, sendResponse) => {
+      console.log('Content script received message:', message);
+
+      switch (message.type) {
+        case MessageType.HIGHLIGHT_TEXT:
+          this.highlightText(message.data.text);
+          sendResponse({ success: true });
+          break;
+
+        case MessageType.GET_PAGE_INFO:
+          this.getPageInfo(sendResponse);
+          return true; // Keep message channel open
+
+        case MessageType.SCROLL_TO_ELEMENT:
+          this.scrollToElement(message.data.selector);
+          sendResponse({ success: true });
+          break;
+
+        default:
+          sendResponse({ success: false, error: 'Unknown message type' });
+      }
+    });
+  }
+
+  private injectStyles() {
+    // Inject CSS styles for extension features
+    const style = document.createElement('style');
+    style.textContent = `
+      .extension-highlight {
+        background-color: #ffeb3b !important;
+        padding: 2px 4px !important;
+        border-radius: 3px !important;
+        transition: background-color 0.3s ease !important;
+      }
+      
+      .extension-tooltip {
+        position: absolute !important;
+        background: #333 !important;
+        color: white !important;
+        padding: 8px 12px !important;
+        border-radius: 4px !important;
+        font-size: 14px !important;
+        z-index: 10000 !important;
+        pointer-events: none !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+      }
+      
+      .extension-tooltip.show {
+        opacity: 1 !important;
+      }
+      
+      .extension-badge {
+        position: fixed !important;
+        top: 20px !important;
+        right: 20px !important;
+        background: #4CAF50 !important;
+        color: white !important;
+        padding: 8px 16px !important;
+        border-radius: 20px !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 12px !important;
+        z-index: 10000 !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3) !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  private setupFeatures() {
+    // Example feature: Show page statistics
+    if (this.settings.showStats) {
+      this.showPageStats();
+    }
+
+    // Example feature: Add keyboard shortcuts
+    this.setupKeyboardShortcuts();
+
+    // Example feature: Track scroll position
+    if (this.settings.trackScroll) {
+      this.trackScrollPosition();
+    }
+  }
+
+  private highlightText(text: string) {
+    // Find and highlight text on the page
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+
+    const textNodes: Node[] = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.textContent?.includes(text)) {
+        textNodes.push(node);
+      }
+    }
+
+    textNodes.forEach(textNode => {
+      const parent = textNode.parentElement;
+      if (parent && !parent.classList.contains('extension-highlight')) {
+        const content = textNode.textContent || '';
+        const highlightedContent = content.replace(
+          new RegExp(text, 'gi'),
+          `<span class="extension-highlight">$&</span>`
+        );
+
+        if (highlightedContent !== content) {
+          parent.innerHTML = parent.innerHTML.replace(content, highlightedContent);
+        }
+      }
+    });
+  }
+
+  private getPageInfo(sendResponse: (response: any) => void) {
+    const pageInfo = {
+      title: document.title,
+      url: window.location.href,
+      wordCount: document.body.innerText.split(/\s+/).length,
+      images: document.images.length,
+      links: document.links.length,
+      forms: document.forms.length,
+      scripts: document.scripts.length,
+      lastModified: document.lastModified,
+    };
+
+    sendResponse({ success: true, data: pageInfo });
+  }
+
+  private scrollToElement(selector: string) {
+    const element = document.querySelector(selector);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+
+      // Temporarily highlight the element
+      element.classList.add('extension-highlight');
+      setTimeout(() => {
+        element.classList.remove('extension-highlight');
+      }, 2000);
+    }
+  }
+
+  private showPageStats() {
+    // Create a small badge showing page statistics
+    const badge = document.createElement('div');
+    badge.className = 'extension-badge';
+    badge.textContent = `Words: ${document.body.innerText.split(/\s+/).length}`;
+    document.body.appendChild(badge);
+
+    // Remove badge after 5 seconds
+    setTimeout(() => {
+      badge.remove();
+    }, 5000);
+  }
+
+  private setupKeyboardShortcuts() {
+    document.addEventListener('keydown', event => {
+      // Alt + E: Toggle extension features
+      if (event.altKey && event.key === 'e') {
+        event.preventDefault();
+        this.toggleExtensionUI();
+      }
+
+      // Alt + H: Highlight selected text
+      if (event.altKey && event.key === 'h') {
+        event.preventDefault();
+        const selection = window.getSelection();
+        if (selection && selection.toString()) {
+          this.highlightText(selection.toString());
+        }
+      }
+    });
+  }
+
+  private trackScrollPosition() {
+    let scrollTimeout: ReturnType<typeof setTimeout>;
+
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        const scrollPercent = Math.round(
+          (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
+        );
+
+        // Save scroll position
+        StorageService.setItem(`scroll_${window.location.href}`, {
+          position: window.scrollY,
+          percent: scrollPercent,
+          timestamp: Date.now(),
+        });
+      }, 500);
+    });
+  }
+
+  private toggleExtensionUI() {
+    // Example of toggling extension UI elements
+    const highlights = document.querySelectorAll('.extension-highlight');
+    const badges = document.querySelectorAll('.extension-badge');
+
+    const isVisible = highlights.length > 0 || badges.length > 0;
+
+    if (isVisible) {
+      // Hide extension elements
+      highlights.forEach(el => el.classList.remove('extension-highlight'));
+      badges.forEach(el => el.remove());
+    } else {
+      // Show page stats badge
+      this.showPageStats();
+    }
+  }
+
+  // Send message to background script with tab info
+  private async notifyBackground() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: MessageType.GET_TAB_INFO,
+      });
+      console.log('Background response:', response);
+    } catch (error) {
+      console.error('Failed to communicate with background:', error);
+    }
+  }
+}
+
+// Initialize content script when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => new ContentScript());
+} else {
+  new ContentScript();
+}
+
+// Handle dynamic content changes
+const observer = new MutationObserver(mutations => {
+  // Re-apply features if significant DOM changes occur
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      // Only re-initialize if substantial content was added
+      const hasSignificantChanges = Array.from(mutation.addedNodes).some(
+        node => node.nodeType === Node.ELEMENT_NODE && (node as Element).children.length > 5
+      );
+
+      if (hasSignificantChanges) {
+        console.log('Significant DOM changes detected, re-applying features');
+        // Could re-initialize features here if needed
+      }
+    }
+  });
+});
+
+observer.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
+
+export default ContentScript;
