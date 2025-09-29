@@ -112,9 +112,9 @@ chrome-extension-template/
 │   │   ├── setup.ts         # Test setup
 │   │   └── *.test.ts        # Unit tests
 │   └── manifest.json       # Extension manifest
-├── assets/                  # Static assets
-│   ├── icons/               # Extension icons
-│   └── images/              # Other images
+│   ├── assets/              # Static assets
+│   │   ├── icons/           # Extension icons
+│   │   └── images/          # Other images
 ├── scripts/                 # Build scripts
 │   └── zip.js               # Packaging script
 ├── dist/                    # Built extension (auto-generated)
@@ -256,7 +256,7 @@ npm run test -- --coverage
 - Add popup actions and settings
 
 ### Icons and Assets
-- Replace icons in `assets/icons/` directory
+- Replace icons in `src/assets/icons/` directory
 - Ensure multiple sizes (16, 32, 48, 128 pixels)
 - Update `src/manifest.json` icon references
 
