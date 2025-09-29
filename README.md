@@ -108,16 +108,17 @@ chrome-extension-template/
 │   │   └── storage.ts       # Storage management
 │   ├── types/               # TypeScript definitions
 │   │   └── messages.ts      # Message type definitions
-│   └── __tests__/           # Test files
-│       ├── setup.ts         # Test setup
-│       └── *.test.ts        # Unit tests
+│   │── __tests__/           # Test files
+│   │   ├── setup.ts         # Test setup
+│   │   └── *.test.ts        # Unit tests
+│   └── manifest.json       # Extension manifest
 ├── assets/                  # Static assets
 │   ├── icons/               # Extension icons
 │   └── images/              # Other images
 ├── scripts/                 # Build scripts
 │   └── zip.js               # Packaging script
 ├── dist/                    # Built extension (auto-generated)
-├── manifest.json            # Extension manifest
+│   └── manifest.json       # Extension manifest
 ├── package.json             # Node.js dependencies
 ├── webpack.config.js        # Build configuration
 ├── tsconfig.json            # TypeScript configuration
@@ -172,7 +173,7 @@ Unified storage API (`src/utils/storage.ts`) providing:
 ## 🔧 Configuration
 
 ### Permissions
-The extension requests these permissions in `manifest.json`:
+The extension requests these permissions in `src/manifest.json`:
 - `storage` - For saving settings and data
 - `activeTab` - For interacting with the current tab
 - `scripting` - For injecting content scripts
@@ -257,7 +258,7 @@ npm run test -- --coverage
 ### Icons and Assets
 - Replace icons in `assets/icons/` directory
 - Ensure multiple sizes (16, 32, 48, 128 pixels)
-- Update manifest.json icon references
+- Update `src/manifest.json` icon references
 
 ## 🔒 Security Best Practices
 
@@ -283,7 +284,7 @@ The extension implements strict CSP:
 
 **Extension doesn't load:**
 - Check console for errors in `chrome://extensions/`
-- Verify manifest.json syntax
+- Verify `src/manifest.json` syntax
 - Ensure all required files are present
 
 **Build failures:**
