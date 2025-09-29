@@ -65,7 +65,7 @@ module.exports = (env, argv) => {
             to: 'manifest.json',
           },
           {
-            from: 'assets',
+            from: 'src/assets',
             to: 'assets',
             noErrorOnMissing: true,
           },
