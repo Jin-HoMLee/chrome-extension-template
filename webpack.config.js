@@ -52,11 +52,13 @@ module.exports = (env, argv) => {
         template: './src/popup/popup.html',
         filename: 'popup/popup.html',
         chunks: ['popup'],
+        inject: false,
       }),
       new HtmlWebpackPlugin({
         template: './src/options/options.html',
         filename: 'options/options.html',
         chunks: ['options'],
+        inject: false,
       }),
       new CopyWebpackPlugin({
         patterns: [
