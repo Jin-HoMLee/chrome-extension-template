@@ -3,6 +3,7 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
+import { CONFIG } from '@/config/constants';
 import './popup.css';
 
 class PopupManager {
@@ -84,9 +85,7 @@ class PopupManager {
     });
 
     document.getElementById('helpBtn')?.addEventListener('click', () => {
-      const manifest = chrome.runtime.getManifest();
-      const helpUrl = manifest.homepage_url || 'https://github.com/your-username/your-repo#readme';
-      chrome.tabs.create({ url: helpUrl });
+      chrome.tabs.create({ url: CONFIG.HELP_URL });
       window.close();
     });
   }

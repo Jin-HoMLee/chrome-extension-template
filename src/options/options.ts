@@ -2,6 +2,7 @@
 // This script handles the options/settings page functionality
 
 import { StorageService } from '@/utils/storage';
+import { CONFIG } from '@/config/constants';
 import './options.css';
 
 class OptionsManager {
@@ -231,6 +232,7 @@ class OptionsManager {
 
   private updateUI() {
     this.updateBuildInfo();
+    this.createAboutLinks();
   }
 
   private async updateBuildInfo() {
@@ -244,6 +246,33 @@ class OptionsManager {
     if (lastUpdated) {
       lastUpdated.textContent = new Date().toLocaleDateString();
     }
+  }
+
+  private createAboutLinks() {
+    const linkGrid = document.querySelector('.link-grid');
+    if (!linkGrid) return;
+
+    // Clear any existing content
+    linkGrid.innerHTML = '';
+
+    const links = [
+      { icon: '📖', text: 'Documentation', url: CONFIG.DOCUMENTATION_URL },
+      { icon: '🐛', text: 'Report Issues', url: CONFIG.SUPPORT_URL },
+      { icon: '🚀', text: 'Releases', url: CONFIG.RELEASES_URL },
+      { icon: '👨‍💻', text: 'Developer', url: CONFIG.DEVELOPER_URL },
+    ];
+
+    links.forEach(linkData => {
+      const link = document.createElement('a');
+      link.href = linkData.url;
+      link.target = '_blank';
+      link.className = 'link-btn';
+      link.innerHTML = `
+        <span class="link-icon">${linkData.icon}</span>
+        ${linkData.text}
+      `;
+      linkGrid.appendChild(link);
+    });
   }
 
   private addKeyword(keyword: string) {
