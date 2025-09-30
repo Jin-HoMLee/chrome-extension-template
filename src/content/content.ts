@@ -252,17 +252,6 @@ class ContentScript {
     }
   }
 
-  // Send message to background script with tab info
-  private async notifyBackground() {
-    try {
-      const response = await chrome.runtime.sendMessage({
-        type: MessageType.GET_TAB_INFO,
-      });
-      console.log('Background response:', response);
-    } catch (error) {
-      console.error('Failed to communicate with background:', error);
-    }
-  }
 }
 
 // Initialize content script when DOM is ready
