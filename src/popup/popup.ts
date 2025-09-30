@@ -313,8 +313,9 @@ Last Modified: ${info.lastModified}
           type: MessageType.SETTINGS_UPDATED,
           data: this.settings,
         })
-        .catch(() => {
+        .catch((error) => {
           // Background script might not be ready, which is okay
+          console.debug('Failed to send message to background script:', error);
         });
 
       this.updateStatus();
