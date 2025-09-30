@@ -300,26 +300,24 @@ Last Modified: ${info.lastModified}
 
       // Notify background script and content scripts of setting change
       if (this.currentTab?.id) {
-        chrome.tabs
-          .sendMessage(this.currentTab.id, {
-            type: MessageType.SETTINGS_UPDATED,
-            data: this.settings,
-          })
-          .catch(() => {
-            // Content script might not be loaded, which is okay
-            console.debug('No content script in the current tab to receive settings update');
-          });
-      }
-
-      chrome.runtime
-        .sendMessage({
+        const settingsMessage = {
           type: MessageType.SETTINGS_UPDATED,
           data: this.settings,
-        })
-        .catch((error) => {
-          // Background script might not be ready, which is okay
-          console.debug('Failed to send message to background script:', error);
+        };
+
+        chrome.tabs.sendMessage(this.currentTab.id, settingsMessage).catch(() => {
+          // Content script might not be loaded, which is okay
         });
+      }
+
+      const backgroundMessage = {
+        type: MessageType.SETTINGS_UPDATED,
+        data: this.settings,
+      };
+
+      chrome.runtime.sendMessage(backgroundMessage).catch(() => {
+        // Background script might not be ready, which is okay
+      });
 
       this.updateStatus();
       this.showToast(`${setting} ${value ? 'enabled' : 'disabled'}`, 'success');
