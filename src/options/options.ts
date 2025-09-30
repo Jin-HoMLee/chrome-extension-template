@@ -300,6 +300,7 @@ class OptionsManager {
         })
         .catch(() => {
           // Background script might not be ready
+          console.warn('Background script not ready');
         });
     } catch (error) {
       console.error('Failed to save settings:', error);
