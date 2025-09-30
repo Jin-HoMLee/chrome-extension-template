@@ -147,9 +147,9 @@ export class StorageService {
   ) {
     const areaName = useSync ? 'sync' : 'local';
 
-    chrome.storage.onChanged.addListener((_changes, areaNameChanged) => {
+    chrome.storage.onChanged.addListener((changes, areaNameChanged) => {
       if (areaNameChanged === areaName) {
-        callback(_changes);
+        callback(changes);
       }
     });
   }
