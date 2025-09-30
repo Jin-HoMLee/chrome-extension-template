@@ -15,5 +15,11 @@ export const TOAST_CONFIG = {
   SHOW_DELAY: 100,
 } as const;
 
+// Content script DOM monitoring constants
+export const DOM_CONFIG = {
+  SIGNIFICANT_CHANGE_THRESHOLD: 5,
+} as const;
+
 export type ConfigType = typeof CONFIG;
 export type ToastConfigType = typeof TOAST_CONFIG;
+export type DomConfigType = typeof DOM_CONFIG;
