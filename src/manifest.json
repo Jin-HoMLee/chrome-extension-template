@@ -3,6 +3,7 @@
   "name": "Chrome Extension Template",
   "version": "1.0.0",
   "description": "A comprehensive template for Chrome browser extensions with modern development tools and best practices",
+  "homepage_url": "https://github.com/Jin-HoMLee/chrome-extension-template#readme",
   "permissions": [
     "storage",
     "activeTab",

@@ -84,7 +84,9 @@ class PopupManager {
     });
 
     document.getElementById('helpBtn')?.addEventListener('click', () => {
-      chrome.tabs.create({ url: 'https://github.com/Jin-HoMLee/chrome-extension-template#readme' });
+      const manifest = chrome.runtime.getManifest();
+      const helpUrl = manifest.homepage_url || 'https://github.com/your-username/your-repo#readme';
+      chrome.tabs.create({ url: helpUrl });
       window.close();
     });
   }
