@@ -2,7 +2,8 @@
 // This script handles the options/settings page functionality
 
 import { StorageService } from '@/utils/storage';
-import { CONFIG, TOAST_CONFIG } from '@/config/constants';
+import { CONFIG } from '@/config/constants';
+import { handleToastLifecycle } from '@/utils/toast';
 import './options.css';
 
 class OptionsManager {
@@ -528,7 +529,7 @@ class OptionsManager {
     }
   }
 
-  private showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
+  private async showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
@@ -538,18 +539,7 @@ class OptionsManager {
 
     container.appendChild(toast);
 
-    // Trigger animation
-    setTimeout(() => toast.classList.add('show'), TOAST_CONFIG.SHOW_DELAY);
-
-    // Remove toast after duration
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => {
-        if (container.contains(toast)) {
-          container.removeChild(toast);
-        }
-      }, TOAST_CONFIG.TRANSITION_DURATION);
-    }, TOAST_CONFIG.SHOW_DURATION);
+    await handleToastLifecycle(toast);
   }
 }
 

@@ -3,7 +3,8 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
-import { CONFIG, TOAST_CONFIG } from '@/config/constants';
+import { CONFIG } from '@/config/constants';
+import { handleToastLifecycle } from '@/utils/toast';
 import './popup.css';
 
 class PopupManager {
@@ -334,7 +335,7 @@ Last Modified: ${info.lastModified}
     }
   }
 
-  private showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
+  private async showToast(message: string, type: 'success' | 'error' | 'warning' = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
@@ -344,18 +345,7 @@ Last Modified: ${info.lastModified}
 
     container.appendChild(toast);
 
-    // Trigger animation
-    setTimeout(() => toast.classList.add('show'), TOAST_CONFIG.SHOW_DELAY);
-
-    // Remove toast after duration
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => {
-        if (container.contains(toast)) {
-          container.removeChild(toast);
-        }
-      }, TOAST_CONFIG.TRANSITION_DURATION);
-    }, TOAST_CONFIG.SHOW_DURATION);
+    await handleToastLifecycle(toast);
   }
 }
 
