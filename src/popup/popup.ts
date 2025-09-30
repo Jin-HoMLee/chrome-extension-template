@@ -305,6 +305,7 @@ Last Modified: ${info.lastModified}
           })
           .catch(() => {
             // Content script might not be loaded, which is okay
+            console.debug('No content script in the current tab to receive settings update');
           });
       }
 
