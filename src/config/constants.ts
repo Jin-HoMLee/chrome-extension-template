@@ -8,4 +8,12 @@ export const CONFIG = {
   VERSION: '1.0.0',
 } as const;
 
+// Toast notification timing constants
+export const TOAST_CONFIG = {
+  SHOW_DURATION: 4000,
+  TRANSITION_DURATION: 300,
+  SHOW_DELAY: 100,
+} as const;
+
 export type ConfigType = typeof CONFIG;
+export type ToastConfigType = typeof TOAST_CONFIG;

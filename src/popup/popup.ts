@@ -3,7 +3,7 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
-import { CONFIG } from '@/config/constants';
+import { CONFIG, TOAST_CONFIG } from '@/config/constants';
 import './popup.css';
 
 class PopupManager {
@@ -345,13 +345,17 @@ Last Modified: ${info.lastModified}
     container.appendChild(toast);
 
     // Trigger animation
-    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => toast.classList.add('show'), TOAST_CONFIG.SHOW_DELAY);
 
-    // Remove toast after 3 seconds
+    // Remove toast after duration
     setTimeout(() => {
       toast.classList.remove('show');
-      setTimeout(() => container.removeChild(toast), 300);
-    }, 3000);
+      setTimeout(() => {
+        if (container.contains(toast)) {
+          container.removeChild(toast);
+        }
+      }, TOAST_CONFIG.TRANSITION_DURATION);
+    }, TOAST_CONFIG.SHOW_DURATION);
   }
 }
 

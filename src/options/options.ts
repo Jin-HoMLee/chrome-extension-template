@@ -2,18 +2,13 @@
 // This script handles the options/settings page functionality
 
 import { StorageService } from '@/utils/storage';
-import { CONFIG } from '@/config/constants';
+import { CONFIG, TOAST_CONFIG } from '@/config/constants';
 import './options.css';
 
 class OptionsManager {
   private currentSection = 'general';
   private settings: any = {};
   private keywords: string[] = [];
-
-  // Toast configuration constants
-  private static readonly TOAST_SHOW_DURATION = 4000;
-  private static readonly TOAST_TRANSITION_DURATION = 300;
-  private static readonly TOAST_SHOW_DELAY = 100;
 
   constructor() {
     this.init();
@@ -544,7 +539,7 @@ class OptionsManager {
     container.appendChild(toast);
 
     // Trigger animation
-    setTimeout(() => toast.classList.add('show'), OptionsManager.TOAST_SHOW_DELAY);
+    setTimeout(() => toast.classList.add('show'), TOAST_CONFIG.SHOW_DELAY);
 
     // Remove toast after duration
     setTimeout(() => {
@@ -553,8 +548,8 @@ class OptionsManager {
         if (container.contains(toast)) {
           container.removeChild(toast);
         }
-      }, OptionsManager.TOAST_TRANSITION_DURATION);
-    }, OptionsManager.TOAST_SHOW_DURATION);
+      }, TOAST_CONFIG.TRANSITION_DURATION);
+    }, TOAST_CONFIG.SHOW_DURATION);
   }
 }
 
