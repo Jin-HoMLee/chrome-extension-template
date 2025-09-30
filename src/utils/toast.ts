@@ -7,16 +7,11 @@ import { TOAST_CONFIG } from '@/config/constants';
 
 /**
  * Creates a Promise-based delay that can be used with async/await
- * @param ms - The delay duration in milliseconds
+ * @param ms - The delay duration in milliseconds (negative values are clamped to 0)
  * @returns A Promise that resolves after the specified delay
- * @throws Error if ms is negative
  */
 const delay = (ms: number): Promise<void> => {
-  if (ms < 0) {
-    throw new Error('Delay duration cannot be negative');
-  }
-  
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, Math.max(0, ms)));
 };
 
 /**
