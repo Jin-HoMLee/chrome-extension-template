@@ -2,6 +2,7 @@
 // This script handles the options/settings page functionality
 
 import { StorageService } from '@/utils/storage';
+import './options.css';
 
 class OptionsManager {
   private currentSection = 'general';

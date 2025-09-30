@@ -3,6 +3,7 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
+import './popup.css';
 
 class PopupManager {
   private currentTab: chrome.tabs.Tab | null = null;
