@@ -3,7 +3,7 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
-import { CONFIG } from '@/config/constants';
+import { CONFIG, TIME_CONFIG } from '@/config/constants';
 import { handleToastLifecycle } from '@/utils/toast';
 import './popup.css';
 
@@ -142,7 +142,7 @@ class PopupManager {
     }
 
     if (totalTimeElement) {
-      const minutes = Math.floor(this.stats.totalTime / 60000);
+      const minutes = Math.floor(this.stats.totalTime / TIME_CONFIG.MILLISECONDS_PER_MINUTE);
       totalTimeElement.textContent = `${minutes}m`;
     }
 

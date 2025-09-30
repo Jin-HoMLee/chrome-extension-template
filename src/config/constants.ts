@@ -20,6 +20,12 @@ export const DOM_CONFIG = {
   SIGNIFICANT_CHANGE_THRESHOLD: 5,
 } as const;
 
+// Time conversion constants
+export const TIME_CONFIG = {
+  MILLISECONDS_PER_MINUTE: 60000,
+} as const;
+
 export type ConfigType = typeof CONFIG;
 export type ToastConfigType = typeof TOAST_CONFIG;
 export type DomConfigType = typeof DOM_CONFIG;
+export type TimeConfigType = typeof TIME_CONFIG;
