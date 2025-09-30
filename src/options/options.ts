@@ -8,6 +8,11 @@ class OptionsManager {
   private settings: any = {};
   private keywords: string[] = [];
 
+  // Toast configuration constants
+  private static readonly TOAST_SHOW_DURATION = 4000;
+  private static readonly TOAST_TRANSITION_DURATION = 300;
+  private static readonly TOAST_SHOW_DELAY = 100;
+
   constructor() {
     this.init();
   }
@@ -508,17 +513,17 @@ class OptionsManager {
     container.appendChild(toast);
 
     // Trigger animation
-    setTimeout(() => toast.classList.add('show'), 100);
+    setTimeout(() => toast.classList.add('show'), OptionsManager.TOAST_SHOW_DELAY);
 
-    // Remove toast after 4 seconds
+    // Remove toast after duration
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => {
         if (container.contains(toast)) {
           container.removeChild(toast);
         }
-      }, 300);
-    }, 4000);
+      }, OptionsManager.TOAST_TRANSITION_DURATION);
+    }, OptionsManager.TOAST_SHOW_DURATION);
   }
 }
 
