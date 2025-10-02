@@ -5,6 +5,7 @@ import { StorageService } from '@/utils/storage';
 import { CONFIG } from '@/config/constants';
 import { handleToastLifecycle } from '@/utils/toast';
 import './options.css';
+import { MessageType } from '@/types/messages';
 
 class OptionsManager {
   private currentSection = 'general';
@@ -332,7 +333,7 @@ class OptionsManager {
       // Notify other parts of the extension about settings changes
       chrome.runtime
         .sendMessage({
-          type: 'SETTINGS_UPDATED',
+          type: MessageType.SETTINGS_UPDATED,
           data: this.settings,
         })
         .catch(() => {
