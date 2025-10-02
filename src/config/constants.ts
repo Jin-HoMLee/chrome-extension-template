@@ -18,6 +18,7 @@ export const TOAST_CONFIG = {
 // Content script DOM monitoring constants
 export const DOM_CONFIG = {
   SIGNIFICANT_CHANGE_THRESHOLD: 5,
+  MUTATION_DEBOUNCE_DELAY: 500,
 } as const;
 
 // Time conversion constants

@@ -3,11 +3,12 @@
 
 import { ExtensionMessage, MessageType } from '@/types/messages';
 import { StorageService } from '@/utils/storage';
-import { DOM_CONFIG } from '@/config/constants';
+import { DOMObserver } from '@/utils/dom-observer';
 
 class ContentScript {
   private isInitialized = false;
   private settings: any = {};
+  private domObserver = new DOMObserver();
 
   constructor() {
     this.init();
@@ -31,6 +32,7 @@ class ContentScript {
       this.setupMessageListener();
       this.injectStyles();
       this.setupFeatures();
+      this.startDOMObserver();
 
       this.isInitialized = true;
       console.log('Content script initialized successfully');
@@ -253,6 +255,14 @@ class ContentScript {
     }
   }
 
+  private startDOMObserver() {
+    // Start observing DOM changes for dynamic content
+    this.domObserver.start(() => {
+      console.log('Significant DOM changes detected, re-applying features');
+      // Could re-initialize features here if needed
+    });
+  }
+
 }
 
 // Initialize content script when DOM is ready
@@ -261,28 +271,5 @@ if (document.readyState === 'loading') {
 } else {
   new ContentScript();
 }
-
-// Handle dynamic content changes
-const observer = new MutationObserver(mutations => {
-  // Re-apply features if significant DOM changes occur
-  mutations.forEach(mutation => {
-    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-      // Only re-initialize if substantial content was added
-      const hasSignificantChanges = Array.from(mutation.addedNodes).some(
-        node => node.nodeType === Node.ELEMENT_NODE && (node as Element).children.length > DOM_CONFIG.SIGNIFICANT_CHANGE_THRESHOLD
-      );
-
-      if (hasSignificantChanges) {
-        console.log('Significant DOM changes detected, re-applying features');
-        // Could re-initialize features here if needed
-      }
-    }
-  });
-});
-
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
 
 export default ContentScript;
