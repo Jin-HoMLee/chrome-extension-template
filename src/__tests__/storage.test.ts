@@ -147,16 +147,33 @@ describe('StorageService', () => {
       expect(result).toBe(true);
     });
 
-    it('should store string as-is', async () => {
+    it('should stringify string and store it', async () => {
       (chrome.storage.local.set as jest.Mock).mockResolvedValue(undefined);
 
       const stringData = 'test string';
       const result = await StorageService.setJSON('key', stringData);
 
       expect(chrome.storage.local.set).toHaveBeenCalledWith({
-        key: stringData,
+        key: JSON.stringify(stringData),
       });
       expect(result).toBe(true);
+    });
+
+    it('should handle string round-trip correctly', async () => {
+      const stringData = 'test string';
+      const stringifiedData = JSON.stringify(stringData);
+      
+      // Mock setJSON behavior
+      (chrome.storage.local.set as jest.Mock).mockResolvedValue(undefined);
+      
+      // Mock getJSON behavior
+      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: stringifiedData });
+
+      // Test the round trip
+      await StorageService.setJSON('key', stringData);
+      const retrieved = await StorageService.getJSON('key', '');
+
+      expect(retrieved).toBe(stringData);
     });
   });
 

@@ -192,7 +192,7 @@ export class StorageService {
    */
   static async setJSON(key: string, value: any, useSync: boolean = false): Promise<boolean> {
     try {
-      // Always stringify to ensure consistent storage format
+      // Always stringify to ensure consistent storage format and valid JSON
       const valueToStore = JSON.stringify(value);
       return await this.setItem(key, valueToStore, useSync);
     } catch (error) {
