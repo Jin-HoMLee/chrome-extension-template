@@ -31,6 +31,10 @@ A comprehensive template for building modern Chrome browser extensions with Type
 - **Error Handling** - Comprehensive error boundaries and logging
 - **Storage Management** - Unified storage API with error handling
 - **Message Passing** - Type-safe communication between components
+- **Code Quality** - Magic number elimination and constant centralization
+- **Modern Async Patterns** - Promise-based utilities with async/await
+- **DOM Monitoring** - Efficient mutation observer for dynamic content
+- **Modular Architecture** - Focused utility modules with single responsibilities
 
 ## 📦 Quick Start
 
@@ -104,8 +108,12 @@ chrome-extension-template/
 │   │   ├── options.html     # Options HTML
 │   │   ├── options.css      # Options styles
 │   │   └── options.ts       # Options logic
+│   ├── config/              # Configuration constants
+│   │   └── constants.ts     # Centralized configuration
 │   ├── utils/               # Utility functions
-│   │   └── storage.ts       # Storage management
+│   │   ├── storage.ts       # Storage management
+│   │   ├── toast.ts         # Toast notification utilities
+│   │   └── dom-observer.ts  # DOM mutation observer
 │   ├── types/               # TypeScript definitions
 │   │   └── messages.ts      # Message type definitions
 │   │── __tests__/           # Test files
@@ -144,7 +152,8 @@ Located in `src/content/content.ts`, provides:
 - Text highlighting functionality
 - Page information extraction
 - Keyboard shortcuts
-- Dynamic content handling
+- Dynamic content handling with efficient mutation observer
+- Performance-optimized DOM change detection
 
 ### Popup Interface
 Modern, responsive popup (`src/popup/`) featuring:
@@ -152,7 +161,8 @@ Modern, responsive popup (`src/popup/`) featuring:
 - Current page information
 - Settings toggles
 - Usage statistics
-- Toast notifications
+- Modern async/await toast notifications
+- Clean error handling and user feedback
 
 ### Options Page
 Comprehensive settings page (`src/options/`) with:
@@ -161,6 +171,8 @@ Comprehensive settings page (`src/options/`) with:
 - Data import/export
 - Custom CSS editor
 - Theme selection
+- Centralized configuration management
+- Dynamic URL generation from constants
 
 ### Storage Service
 Unified storage API (`src/utils/storage.ts`) providing:
@@ -169,6 +181,56 @@ Unified storage API (`src/utils/storage.ts`) providing:
 - Sync vs local storage
 - JSON serialization
 - Quota management
+
+### Configuration Management
+Centralized constants (`src/config/constants.ts`) featuring:
+- URL configuration with single source of truth
+- Toast timing constants for consistent UX
+- DOM monitoring thresholds
+- Time conversion constants
+- Type-safe exports with TypeScript
+
+### Toast Notifications
+Modern notification system (`src/utils/toast.ts`) with:
+- Promise-based async/await lifecycle management
+- Configurable timing and animations
+- Clean separation from business logic
+- Defensive programming with graceful error handling
+
+### DOM Observer
+Intelligent content monitoring (`src/utils/dom-observer.ts`) providing:
+- Efficient mutation observer for dynamic web apps
+- Debounced processing to prevent performance issues
+- Selective filtering for significant content changes
+- Comprehensive documentation with real-world examples
+- Support for React/Vue/Angular single-page applications
+
+## 🏛️ Architecture & Design Patterns
+
+### Modular Design
+The template follows modern architectural principles:
+- **Single Responsibility Principle**: Each module has one clear purpose
+- **Separation of Concerns**: UI, business logic, and utilities are separated
+- **DRY Principle**: Shared functionality extracted into reusable utilities
+- **Defensive Programming**: Graceful error handling and input validation
+
+### Code Quality Standards
+- **Magic Number Elimination**: All hardcoded values moved to constants
+- **Consistent APIs**: Standardized patterns across all modules
+- **Type Safety**: Comprehensive TypeScript coverage
+- **Documentation**: Extensive JSDoc comments with examples
+
+### Performance Optimizations
+- **Debounced Operations**: DOM mutation observer uses intelligent debouncing
+- **Selective Filtering**: Only process significant content changes
+- **Lazy Loading**: Features loaded only when needed
+- **Memory Management**: Proper cleanup and resource management
+
+### Modern JavaScript Patterns
+- **Async/Await**: Promise-based patterns throughout
+- **ES Modules**: Clean import/export structure
+- **Const Assertions**: Type-safe configuration objects
+- **Optional Chaining**: Safe property access patterns
 
 ## 🔧 Configuration
 
@@ -296,12 +358,27 @@ The extension implements strict CSP:
 - Check if content script is injected: `chrome://extensions/`
 - Verify host permissions in manifest
 - Check for JavaScript errors in page console
+- Monitor DOM observer activity in console logs
+
+**Toast notifications not appearing:**
+- Verify `toastContainer` element exists in HTML
+- Check console for timing configuration errors
+- Ensure proper import of toast utilities
+
+**Configuration issues:**
+- All constants are centralized in `src/config/constants.ts`
+- Check TypeScript compilation for constant exports
+- Verify import paths use correct module structure
 
 ### Development Tips
 - Use Chrome DevTools for debugging
 - Check background script console in `chrome://extensions/`
 - Use `chrome.storage.local.get()` in console to inspect storage
 - Enable extension debugging in Chrome settings
+- Monitor DOM changes with observer console logs
+- Use TypeScript compiler to catch configuration errors
+- Leverage centralized constants for easy configuration changes
+- Test async/await patterns with proper error handling
 
 ## 🤝 Contributing
 
