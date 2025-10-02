@@ -317,8 +317,7 @@ Last Modified: ${info.lastModified}
       };
 
       chrome.runtime.sendMessage(backgroundMessage).catch(() => {
-        // This error can occur if the background script is not yet initialized (e.g., after extension reload, update, or if the extension was temporarily disabled).
-        // No user action is required; this is expected in some lifecycle scenarios. If this happens frequently, developers may want to investigate extension startup timing.
+        // Background script might not be ready - this is expected during extension lifecycle events.
       });
 
       this.updateStatus();
