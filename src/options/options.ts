@@ -10,6 +10,24 @@ class OptionsManager {
   private currentSection = 'general';
   private settings: any = {};
   private keywords: string[] = [];
+  
+  // Centralized mapping of checkbox IDs to setting keys
+  private readonly checkboxMapping = new Map<string, string>([
+    ['enabledToggle', 'enabled'],
+    ['notificationsToggle', 'notifications'],
+    ['trackScrollToggle', 'trackScroll'],
+    ['autoHighlightToggle', 'autoHighlight'],
+    ['statsToggle', 'collectStats'],
+    ['localStorageToggle', 'localStorage'],
+    ['debugToggle', 'debug'],
+    ['customCssToggle', 'customCss'],
+  ]);
+
+  // Centralized mapping of select element IDs to setting keys
+  private readonly selectMapping = new Map<string, string>([
+    ['themeSelect', 'theme'],
+    ['fontSizeSelect', 'fontSize'],
+  ]);
 
   constructor() {
     this.init();
@@ -61,24 +79,18 @@ class OptionsManager {
   }
 
   private setupEventListeners() {
-    // General settings
-    this.setupToggle('enabledToggle', 'enabled');
-    this.setupToggle('notificationsToggle', 'notifications');
-    this.setupToggle('trackScrollToggle', 'trackScroll');
-    this.setupToggle('autoHighlightToggle', 'autoHighlight');
+    // Setup all checkboxes using the centralized mapping
+    this.checkboxMapping.forEach((settingKey, elementId) => {
+      this.setupToggle(elementId, settingKey);
+    });
 
-    // Appearance settings
-    this.setupSelect('themeSelect', 'theme');
+    // Setup all select elements using the centralized mapping
+    this.selectMapping.forEach((settingKey, elementId) => {
+      this.setupSelect(elementId, settingKey);
+    });
+
+    // Color picker (handled separately since it's not in the select mapping)
     this.setupColorPicker('highlightColorPicker', 'highlightColor');
-    this.setupSelect('fontSizeSelect', 'fontSize');
-
-    // Privacy settings
-    this.setupToggle('statsToggle', 'collectStats');
-    this.setupToggle('localStorageToggle', 'localStorage');
-
-    // Advanced settings
-    this.setupToggle('debugToggle', 'debug');
-    this.setupToggle('customCssToggle', 'customCss');
 
     // Keyword management
     this.setupKeywordManager();
@@ -383,14 +395,18 @@ class OptionsManager {
       // Update form controls
       document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         const input = checkbox as HTMLInputElement;
-        const settingKey = input.id.replace('Toggle', '');
-        input.checked = this.settings[settingKey] || false;
+        const settingKey = this.checkboxMapping.get(input.id);
+        if (settingKey) {
+          input.checked = this.settings[settingKey] || false;
+        }
       });
 
       document.querySelectorAll('select').forEach(select => {
         const selectElement = select as HTMLSelectElement;
-        const settingKey = selectElement.id.replace('Select', '');
-        selectElement.value = this.settings[settingKey] || '';
+        const settingKey = this.selectMapping.get(selectElement.id);
+        if (settingKey) {
+          selectElement.value = this.settings[settingKey] || '';
+        }
       });
 
       const cssEditor = document.getElementById('customCssEditor') as HTMLTextAreaElement;
@@ -461,8 +477,10 @@ class OptionsManager {
       // Update form controls
       document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
         const input = checkbox as HTMLInputElement;
-        const settingKey = input.id.replace('Toggle', '');
-        input.checked = this.settings[settingKey] || false;
+        const settingKey = this.checkboxMapping.get(input.id);
+        if (settingKey) {
+          input.checked = this.settings[settingKey] || false;
+        }
       });
 
       const cssEditor = document.getElementById('customCssEditor') as HTMLTextAreaElement;
