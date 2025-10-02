@@ -170,10 +170,12 @@ export class StorageService {
       const value = await this.getItem(key, useSync);
       if (value === null) return defaultValue;
 
+      // Always parse as JSON string since setJSON always stringifies
       if (typeof value === 'string') {
         return JSON.parse(value);
       }
 
+      // Fallback for legacy data that might be stored as objects
       return value;
     } catch (error) {
       console.error('StorageService: Failed to parse JSON from storage', key, error);
@@ -190,8 +192,8 @@ export class StorageService {
    */
   static async setJSON(key: string, value: any, useSync: boolean = false): Promise<boolean> {
     try {
-      // If it's already a string, store as-is, otherwise stringify
-      const valueToStore = typeof value === 'string' ? value : JSON.stringify(value);
+      // Always stringify to ensure consistent storage format
+      const valueToStore = JSON.stringify(value);
       return await this.setItem(key, valueToStore, useSync);
     } catch (error) {
       console.error('StorageService: Failed to stringify and store JSON', key, error);
