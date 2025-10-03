@@ -338,7 +338,7 @@ class OptionsManager {
         })
         .catch(() => {
           // Background script might not be ready, e.g. during extension startup, update, or reload events
-          console.warn('Background script not ready');
+          // Silently ignore, as in popup.ts
         });
     } catch (error) {
       console.error('Failed to save settings:', error);
