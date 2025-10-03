@@ -195,7 +195,6 @@ export class DOMObserver {
    * @private
    */
   private isSignificantTag(tagName: string): boolean {
-    const significantTags = ['div', 'section', 'article', 'main', 'aside', 'nav', 'header', 'footer'];
-    return significantTags.includes(tagName);
+    return (DOM_CONFIG.SIGNIFICANT_TAGS as readonly string[]).includes(tagName);
   }
 }

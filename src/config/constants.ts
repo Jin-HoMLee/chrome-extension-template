@@ -19,6 +19,7 @@ export const TOAST_CONFIG = {
 export const DOM_CONFIG = {
   SIGNIFICANT_CHANGE_THRESHOLD: 5,
   MUTATION_DEBOUNCE_DELAY: 500,
+  SIGNIFICANT_TAGS: ['div', 'section', 'article', 'main', 'aside', 'nav', 'header', 'footer'],
 } as const;
 
 // Time conversion constants
