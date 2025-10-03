@@ -337,7 +337,7 @@ class OptionsManager {
           data: this.settings,
         })
         .catch(() => {
-          // Background script might not be ready
+          // Background script might not be ready, e.g. during extension startup, update, or reload events
           console.warn('Background script not ready');
         });
     } catch (error) {
