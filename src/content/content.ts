@@ -143,19 +143,39 @@ class ContentScript {
       const parent = textNode.parentElement;
       if (parent && !parent.classList.contains('extension-highlight')) {
         const content = textNode.textContent || '';
-        const highlightedContent = content.replace(
-          new RegExp(text, 'gi'),
-          `<span class="extension-highlight">$&</span>`
-        );
-
-        if (highlightedContent !== content) {
-          parent.innerHTML = parent.innerHTML.replace(content, highlightedContent);
+        
+        // Escape regex special characters to prevent injection
+        const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedText})`, 'gi');
+        
+        if (regex.test(content)) {
+          // Split text and create safe DOM elements
+          const parts = content.split(regex);
+          const fragment = document.createDocumentFragment();
+          
+          for (let i = 0; i < parts.length; i++) {
+            if (i % 2 === 0) {
+              // Regular text
+              if (parts[i]) {
+                fragment.appendChild(document.createTextNode(parts[i]));
+              }
+            } else {
+              // Highlighted text - create span element safely
+              const highlightSpan = document.createElement('span');
+              highlightSpan.className = 'extension-highlight';
+              highlightSpan.textContent = parts[i]; // Safe: uses textContent
+              fragment.appendChild(highlightSpan);
+            }
+          }
+          
+          // Replace the text node with the safe fragment
+          parent.replaceChild(fragment, textNode);
         }
       }
     });
   }
 
-  private getPageInfo(sendResponse: (response: any) => void) {
+  private getPageInfo(sendResponse: (_response: any) => void) {
     const pageInfo = {
       title: document.title,
       url: window.location.href,
@@ -258,11 +278,10 @@ class ContentScript {
   private startDOMObserver() {
     // Start observing DOM changes for dynamic content
     this.domObserver.start(() => {
-      console.log('Significant DOM changes detected, re-applying features');
+      // Significant DOM changes detected, re-applying features
       // Could re-initialize features here if needed
     });
   }
-
 }
 
 // Initialize content script when DOM is ready
