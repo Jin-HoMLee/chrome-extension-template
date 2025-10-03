@@ -71,11 +71,11 @@ class ContentScript {
     // Inject CSS styles for extension features
     const style = document.createElement('style');
     style.textContent = `
-      .extension-highlight {
-        background-color: #ffeb3b !important;
-        padding: 2px 4px !important;
-        border-radius: 3px !important;
-        transition: background-color 0.3s ease !important;
+      /* Modern CSS Custom Highlight API styling */
+      ::highlight(extension-highlight) {
+        background-color: #ffeb3b;
+        color: inherit;
+        text-decoration: none;
       }
       
       .extension-tooltip {
@@ -128,51 +128,69 @@ class ContentScript {
   }
 
   private highlightText(text: string) {
-    // Find and highlight text on the page
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-
-    const textNodes: Node[] = [];
-    let node;
-    while ((node = walker.nextNode())) {
-      if (node.textContent?.includes(text)) {
-        textNodes.push(node);
-      }
+    // Trim whitespace and normalize the text
+    const normalizedText = text.trim();
+    
+    // Check if the text is already highlighted (toggle behavior)
+    if (this.hasExistingHighlight()) {
+      this.clearHighlight();
+      return;
     }
 
-    textNodes.forEach(textNode => {
-      const parent = textNode.parentElement;
-      if (parent && !parent.classList.contains('extension-highlight')) {
-        const content = textNode.textContent || '';
-        
-        // Escape regex special characters to prevent injection
-        const escapedText = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const regex = new RegExp(`(${escapedText})`, 'gi');
-        
-        if (regex.test(content)) {
-          // Split text and create safe DOM elements
-          const parts = content.split(regex);
-          const fragment = document.createDocumentFragment();
-          
-          for (let i = 0; i < parts.length; i++) {
-            if (i % 2 === 0) {
-              // Regular text
-              if (parts[i]) {
-                fragment.appendChild(document.createTextNode(parts[i]));
-              }
-            } else {
-              // Highlighted text - create span element safely
-              const highlightSpan = document.createElement('span');
-              highlightSpan.className = 'extension-highlight';
-              highlightSpan.textContent = parts[i]; // Safe: uses textContent
-              fragment.appendChild(highlightSpan);
-            }
-          }
-          
-          // Replace the text node with the safe fragment
-          parent.replaceChild(fragment, textNode);
+    // Create ranges for all occurrences of the text
+    const ranges: Range[] = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    
+    let node;
+    while ((node = walker.nextNode())) {
+      const content = node.textContent || '';
+      
+      // Try exact match first
+      let index = content.indexOf(normalizedText);
+      if (index !== -1) {
+        const range = new Range();
+        range.setStart(node, index);
+        range.setEnd(node, index + normalizedText.length);
+        ranges.push(range);
+      } else {
+        // Try case-insensitive match
+        const lowerContent = content.toLowerCase();
+        const lowerText = normalizedText.toLowerCase();
+        index = lowerContent.indexOf(lowerText);
+        if (index !== -1) {
+          const range = new Range();
+          range.setStart(node, index);
+          range.setEnd(node, index + normalizedText.length);
+          ranges.push(range);
         }
       }
-    });
+    }
+    
+    // Apply the highlight using CSS Highlights API
+    if (ranges.length > 0) {
+      try {
+        const highlight = new Highlight(...ranges);
+        (CSS as any).highlights?.set?.('extension-highlight', highlight);
+      } catch (error) {
+        // Silently fail if CSS Highlights API is not supported
+      }
+    }
+  }
+
+  private hasExistingHighlight(): boolean {
+    try {
+      return (CSS as any).highlights?.has?.('extension-highlight') || false;
+    } catch {
+      return false;
+    }
+  }
+
+  private clearHighlight(): void {
+    try {
+      (CSS as any).highlights?.delete?.('extension-highlight');
+    } catch {
+      // Silently fail if not supported
+    }
   }
 
   private getPageInfo(sendResponse: (_response: any) => void) {
