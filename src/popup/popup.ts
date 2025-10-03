@@ -36,20 +36,20 @@ class PopupManager {
   }
 
   private async loadSettings() {
-    this.settings = (await StorageService.getItem('settings')) || {
+    this.settings = await StorageService.getWithDefault('settings', {
       enabled: true,
       notifications: true,
       trackScroll: false,
-    };
+    });
   }
 
   private async loadStats() {
-    this.stats = (await StorageService.getItem('stats')) || {
+    this.stats = await StorageService.getWithDefault('stats', {
       totalPages: 0,
       totalTime: 0,
       highlightCount: 0,
       screenshotCount: 0,
-    };
+    });
   }
 
   private setupEventListeners() {

@@ -109,7 +109,11 @@ async function handleGetTabInfo(
 // Handle feature toggle
 async function handleToggleFeature(data: any, sendResponse: (response: any) => void) {
   try {
-    const currentSettings = await StorageService.getItem('settings');
+    const currentSettings = await StorageService.getWithDefault('settings', {
+      enabled: true,
+      theme: 'light',
+      notifications: true,
+    });
     const updatedSettings = {
       ...currentSettings,
       [data.feature]: data.enabled,

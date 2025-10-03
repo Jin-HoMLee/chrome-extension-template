@@ -49,7 +49,7 @@ class OptionsManager {
 
   private async loadSettings() {
     // Load all settings from storage
-    this.settings = (await StorageService.getItem('settings')) || {
+    this.settings = await StorageService.getWithDefault('settings', {
       enabled: true,
       notifications: true,
       trackScroll: false,
@@ -61,9 +61,9 @@ class OptionsManager {
       localStorage: false,
       debug: false,
       customCss: false,
-    };
+    });
 
-    this.keywords = (await StorageService.getItem('keywords')) || [];
+    this.keywords = await StorageService.getWithDefault('keywords', []);
   }
 
   private setupNavigation() {
@@ -204,8 +204,8 @@ class OptionsManager {
 
     if (cssEditor) {
       // Load custom CSS
-      StorageService.getItem('customCss').then(css => {
-        cssEditor.value = css || '';
+      StorageService.getWithDefault('customCss', '').then(css => {
+        cssEditor.value = css;
       });
 
       saveCssBtn?.addEventListener('click', () => {
@@ -427,8 +427,8 @@ class OptionsManager {
       const allData = {
         settings: this.settings,
         keywords: this.keywords,
-        customCss: (await StorageService.getItem('customCss')) || '',
-        stats: (await StorageService.getItem('stats')) || {},
+        customCss: await StorageService.getWithDefault('customCss', ''),
+        stats: await StorageService.getWithDefault('stats', {}),
         exportDate: new Date().toISOString(),
         version: '1.0.0',
       };

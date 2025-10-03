@@ -142,7 +142,7 @@ export class StorageService {
    * @param useSync - Whether to listen to sync storage (default: false)
    */
   static onChanged(
-    callback: (changes: Record<string, chrome.storage.StorageChange>) => void,
+    callback: (_changes: Record<string, chrome.storage.StorageChange>) => void,
     useSync: boolean = false
   ) {
     const areaName = useSync ? 'sync' : 'local';
@@ -155,49 +155,40 @@ export class StorageService {
   }
 
   /**
-   * Utility method to safely parse JSON from storage
+   * Get an item from storage with a default value
    * @param key - Storage key
-   * @param defaultValue - Default value if parsing fails
+   * @param defaultValue - Default value if key doesn't exist
    * @param useSync - Whether to use sync storage (default: false)
-   * @returns Promise resolving to parsed object or default value
+   * @returns Promise resolving to the stored value or default value
    */
-  static async getJSON<T = any>(
+  static async getWithDefault<T>(
     key: string,
     defaultValue: T,
     useSync: boolean = false
   ): Promise<T> {
     try {
       const value = await this.getItem(key, useSync);
+<<<<<<< Updated upstream
       if (value === null) return defaultValue;
 
-      // Always parse as JSON string since setJSON always stringifies
+      // If value is already an object, return it directly
+      if (typeof value === 'object' && value !== null) {
+        return value as T;
+      }
+
+      // If value is a string, try to parse it as JSON
       if (typeof value === 'string') {
         return JSON.parse(value);
       }
 
-      // If value is not a string, treat as error and return defaultValue
+      // For other types (number, boolean), return defaultValue
       return defaultValue;
+=======
+      return value ?? defaultValue;
+>>>>>>> Stashed changes
     } catch (error) {
-      console.error('StorageService: Failed to parse JSON from storage', key, error);
+      console.error('StorageService: Failed to get item with default', key, error);
       return defaultValue;
-    }
-  }
-
-  /**
-   * Utility method to safely stringify and store JSON
-   * @param key - Storage key
-   * @param value - Value to stringify and store
-   * @param useSync - Whether to use sync storage (default: false)
-   * @returns Promise resolving to success boolean
-   */
-  static async setJSON(key: string, value: any, useSync: boolean = false): Promise<boolean> {
-    try {
-      // Always stringify to ensure consistent storage format and valid JSON
-      const valueToStore = JSON.stringify(value);
-      return await this.setItem(key, valueToStore, useSync);
-    } catch (error) {
-      console.error('StorageService: Failed to stringify and store JSON', key, error);
-      return false;
     }
   }
 

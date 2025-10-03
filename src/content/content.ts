@@ -21,7 +21,7 @@ class ContentScript {
 
     try {
       // Load settings
-      this.settings = (await StorageService.getItem('settings')) || {};
+      this.settings = await StorageService.getWithDefault('settings', {});
 
       // Only proceed if extension is enabled
       if (!this.settings.enabled) {

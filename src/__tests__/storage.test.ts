@@ -94,86 +94,46 @@ describe('StorageService', () => {
     });
   });
 
-  describe('getJSON', () => {
-    it('should parse JSON string from storage', async () => {
-      const jsonString = '{"name":"test","value":123}';
-      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: jsonString });
+  describe('getWithDefault', () => {
+    it('should return stored value when it exists', async () => {
+      const storedData = { name: 'test', value: 123 };
+      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: storedData });
 
-      const result = await StorageService.getJSON('key', {});
+      const result = await StorageService.getWithDefault('key', { default: true });
 
-      expect(result).toEqual({ name: 'test', value: 123 });
-    });
-
-    it('should return object directly if not a string', async () => {
-      const objectData = { name: 'test', value: 123 };
-      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: objectData });
-
-      const result = await StorageService.getJSON('key', {});
-
-      expect(result).toEqual(objectData);
-    });
-
-    it('should return default value when parsing fails', async () => {
-      const invalidJson = 'invalid json';
-      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: invalidJson });
-
-      const defaultValue = { default: true };
-      const result = await StorageService.getJSON('key', defaultValue);
-
-      expect(result).toBe(defaultValue);
-      expect(console.error).toHaveBeenCalled();
+      expect(result).toEqual(storedData);
     });
 
     it('should return default value when key does not exist', async () => {
       (chrome.storage.local.get as jest.Mock).mockResolvedValue({});
 
       const defaultValue = { default: true };
-      const result = await StorageService.getJSON('key', defaultValue);
+      const result = await StorageService.getWithDefault('key', defaultValue);
 
       expect(result).toBe(defaultValue);
     });
-  });
 
-  describe('setJSON', () => {
-    it('should stringify object and store it', async () => {
-      (chrome.storage.local.set as jest.Mock).mockResolvedValue(undefined);
+    it('should return default value when storage returns null', async () => {
+      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: null });
 
-      const objectData = { name: 'test', value: 123 };
-      const result = await StorageService.setJSON('key', objectData);
+      const defaultValue = { fallback: 'value' };
+      const result = await StorageService.getWithDefault('key', defaultValue);
 
-      expect(chrome.storage.local.set).toHaveBeenCalledWith({
-        key: JSON.stringify(objectData),
-      });
-      expect(result).toBe(true);
+      expect(result).toBe(defaultValue);
     });
 
-    it('should stringify string and store it', async () => {
-      (chrome.storage.local.set as jest.Mock).mockResolvedValue(undefined);
+    it('should handle storage errors gracefully', async () => {
+      (chrome.storage.local.get as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
-      const stringData = 'test string';
-      const result = await StorageService.setJSON('key', stringData);
+      const defaultValue = { error: 'handled' };
+      const result = await StorageService.getWithDefault('key', defaultValue);
 
-      expect(chrome.storage.local.set).toHaveBeenCalledWith({
-        key: JSON.stringify(stringData),
-      });
-      expect(result).toBe(true);
-    });
-
-    it('should handle string round-trip correctly', async () => {
-      const stringData = 'test string';
-      const stringifiedData = JSON.stringify(stringData);
-      
-      // Mock setJSON behavior
-      (chrome.storage.local.set as jest.Mock).mockResolvedValue(undefined);
-      
-      // Mock getJSON behavior
-      (chrome.storage.local.get as jest.Mock).mockResolvedValue({ key: stringifiedData });
-
-      // Test the round trip
-      await StorageService.setJSON('key', stringData);
-      const retrieved = await StorageService.getJSON('key', '');
-
-      expect(retrieved).toBe(stringData);
+      expect(result).toBe(defaultValue);
+      expect(console.error).toHaveBeenCalledWith(
+        'StorageService: Failed to get item',
+        'key',
+        expect.any(Error)
+      );
     });
   });
 
