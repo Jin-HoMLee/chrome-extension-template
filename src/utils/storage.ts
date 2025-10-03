@@ -175,8 +175,8 @@ export class StorageService {
         return JSON.parse(value);
       }
 
-      // Fallback for legacy data that might be stored as objects
-      return value;
+      // If value is not a string, treat as error and return defaultValue
+      return defaultValue;
     } catch (error) {
       console.error('StorageService: Failed to parse JSON from storage', key, error);
       return defaultValue;
