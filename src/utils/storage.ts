@@ -168,24 +168,7 @@ export class StorageService {
   ): Promise<T> {
     try {
       const value = await this.getItem(key, useSync);
-<<<<<<< Updated upstream
-      if (value === null) return defaultValue;
-
-      // If value is already an object, return it directly
-      if (typeof value === 'object' && value !== null) {
-        return value as T;
-      }
-
-      // If value is a string, try to parse it as JSON
-      if (typeof value === 'string') {
-        return JSON.parse(value);
-      }
-
-      // For other types (number, boolean), return defaultValue
-      return defaultValue;
-=======
       return value ?? defaultValue;
->>>>>>> Stashed changes
     } catch (error) {
       console.error('StorageService: Failed to get item with default', key, error);
       return defaultValue;
