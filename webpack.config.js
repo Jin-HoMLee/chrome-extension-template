@@ -8,10 +8,10 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      background: './src/background/background.ts',
-      content: './src/content/content.ts',
-      popup: './src/popup/popup.ts',
-      options: './src/options/options.ts',
+      background: path.join(__dirname, 'src', 'background', 'background.ts'),
+      content: path.join(__dirname, 'src', 'content', 'content.ts'),
+      popup: path.join(__dirname, 'src', 'popup', 'popup.ts'),
+      options: path.join(__dirname, 'src', 'options', 'options.ts'),
     },
     output: {
       path: path.resolve(__dirname, 'dist'),
@@ -49,25 +49,25 @@ module.exports = (env, argv) => {
         filename: '[name]/[name].css',
       }),
       new HtmlWebpackPlugin({
-        template: './src/popup/popup.html',
-        filename: 'popup/popup.html',
+        template: path.join(__dirname, 'src', 'popup', 'popup.html'),
+        filename: path.join('popup', 'popup.html'),
         chunks: ['popup'],
         inject: false,
       }),
       new HtmlWebpackPlugin({
-        template: './src/options/options.html',
-        filename: 'options/options.html',
+        template: path.join(__dirname, 'src', 'options', 'options.html'),
+        filename: path.join('options', 'options.html'),
         chunks: ['options'],
         inject: false,
       }),
       new CopyWebpackPlugin({
         patterns: [
           {
-            from: 'src/manifest.json',
+            from: path.join(__dirname, 'src', 'manifest.json'),
             to: 'manifest.json',
           },
           {
-            from: 'src/assets',
+            from: path.join(__dirname, 'src', 'assets'),
             to: 'assets',
             noErrorOnMissing: true,
           },
