@@ -52,13 +52,15 @@ module.exports = (env, argv) => {
         template: path.join(__dirname, 'src', 'popup', 'popup.html'),
         filename: path.join('popup', 'popup.html'),
         chunks: ['popup'],
-        inject: false,
+        inject: 'body',
+        scriptLoading: 'defer',
       }),
       new HtmlWebpackPlugin({
         template: path.join(__dirname, 'src', 'options', 'options.html'),
         filename: path.join('options', 'options.html'),
         chunks: ['options'],
-        inject: false,
+        inject: 'body',
+        scriptLoading: 'defer',
       }),
       new CopyWebpackPlugin({
         patterns: [
