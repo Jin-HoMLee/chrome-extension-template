@@ -1,9 +1,15 @@
+// Base repository configuration
+const REPO_BASE_URL = 'https://github.com/Jin-HoMLee/chrome-extension-template';
+const DEVELOPER_BASE_URL = 'https://github.com/Jin-HoMLee';
+
 export const CONFIG = {
-  HELP_URL: 'https://github.com/Jin-HoMLee/chrome-extension-template#readme',
-  SUPPORT_URL: 'https://github.com/Jin-HoMLee/chrome-extension-template/issues',
-  DOCUMENTATION_URL: 'https://github.com/Jin-HoMLee/chrome-extension-template',
-  RELEASES_URL: 'https://github.com/Jin-HoMLee/chrome-extension-template/releases',
-  DEVELOPER_URL: 'https://github.com/Jin-HoMLee',
+  // Derived URLs (computed once at module load)
+  HELP_URL: `${REPO_BASE_URL}#readme`,
+  SUPPORT_URL: `${REPO_BASE_URL}/issues`,
+  DOCUMENTATION_URL: REPO_BASE_URL,
+  RELEASES_URL: `${REPO_BASE_URL}/releases`,
+  DEVELOPER_URL: DEVELOPER_BASE_URL,
+  // Extension metadata
   EXTENSION_NAME: 'Chrome Extension Template',
   VERSION: '1.0.0',
 } as const;
