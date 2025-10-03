@@ -249,7 +249,7 @@ class OptionsManager {
     const lastUpdated = document.getElementById('lastUpdated');
 
     if (buildInfo) {
-      buildInfo.textContent = `${Date.now().toString(36).toUpperCase()}`;
+      buildInfo.textContent = CONFIG.VERSION;
     }
 
     if (lastUpdated) {
