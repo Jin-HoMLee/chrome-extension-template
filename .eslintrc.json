@@ -2,7 +2,8 @@
   "env": {
     "browser": true,
     "es2021": true,
-    "webextensions": true
+    "webextensions": true,
+    "node": true
   },
   "extends": [
     "eslint:recommended",
@@ -14,13 +15,24 @@
     "sourceType": "module"
   },
   "plugins": [
-    "prettier"
+    "@typescript-eslint"
   ],
   "rules": {
-    "prettier/prettier": "error",
-    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "no-console": ["warn", { "allow": ["warn", "error"] }],
-    "no-undef": "off"
+    
+    // Disable base ESLint rules that are covered by TypeScript
+    "no-unused-vars": "off",
+    "no-undef": "off",
+    
+    // Use TypeScript-aware rules
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ]
   },
   "globals": {
     "chrome": "readonly"

@@ -166,31 +166,29 @@ class ContentScript {
       }
     }
     
-    // Apply the highlight using CSS Highlights API
-    if (ranges.length > 0) {
-      try {
-        const highlight = new Highlight(...ranges);
-        (CSS as any).highlights?.set?.('extension-highlight', highlight);
-      } catch (error) {
-        // Silently fail if CSS Highlights API is not supported
-      }
+    // Apply the highlight using CSS Highlights API with proper type safety
+    if (ranges.length > 0 && this.isCSSHighlightsSupported()) {
+      const highlight = new Highlight(...ranges);
+      CSS.highlights.set('extension-highlight', highlight);
     }
   }
 
   private hasExistingHighlight(): boolean {
-    try {
-      return (CSS as any).highlights?.has?.('extension-highlight') || false;
-    } catch {
-      return false;
-    }
+    return this.isCSSHighlightsSupported() && CSS.highlights.has('extension-highlight');
   }
 
   private clearHighlight(): void {
-    try {
-      (CSS as any).highlights?.delete?.('extension-highlight');
-    } catch {
-      // Silently fail if not supported
+    if (this.isCSSHighlightsSupported()) {
+      CSS.highlights.delete('extension-highlight');
     }
+  }
+
+  private isCSSHighlightsSupported(): boolean {
+    return (
+      typeof CSS !== 'undefined' && 
+      'highlights' in CSS && 
+      typeof CSS.highlights?.set === 'function'
+    );
   }
 
   private getPageInfo(sendResponse: (_response: any) => void) {
