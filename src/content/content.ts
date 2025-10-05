@@ -9,8 +9,10 @@ class ContentScript {
   private isInitialized = false;
   private settings: any = {};
   private domObserver = new DOMObserver();
+  private cssHighlightsSupported: boolean;
 
   constructor() {
+    this.cssHighlightsSupported = this.checkCSSHighlightsSupport();
     this.init();
   }
 
@@ -183,12 +185,16 @@ class ContentScript {
     }
   }
 
-  private isCSSHighlightsSupported(): boolean {
+  private checkCSSHighlightsSupport(): boolean {
     return (
       typeof CSS !== 'undefined' && 
       'highlights' in CSS && 
       typeof CSS.highlights?.set === 'function'
     );
+  }
+
+  private isCSSHighlightsSupported(): boolean {
+    return this.cssHighlightsSupported;
   }
 
   private getPageInfo(sendResponse: (_response: any) => void) {
