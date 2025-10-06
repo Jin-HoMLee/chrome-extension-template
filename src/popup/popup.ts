@@ -306,9 +306,11 @@ Last Modified: ${info.lastModified}
           data: this.settings,
         };
 
-        chrome.tabs.sendMessage(this.currentTab.id, settingsMessage).catch(() => {
-          // Content script might not be loaded on special pages (e.g., chrome://, extension pages) or during page navigation; this is expected and can be safely ignored.
-        });
+        /**
+         * Content script might not be loaded on special pages (e.g., chrome://, extension pages)
+         * or during page navigation; this is expected and can be safely ignored.
+         */
+        chrome.tabs.sendMessage(this.currentTab.id, settingsMessage).catch(() => {});
       }
 
       const backgroundMessage = {
