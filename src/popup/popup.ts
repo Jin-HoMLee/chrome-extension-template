@@ -321,8 +321,9 @@ Last Modified: ${info.lastModified}
         data: this.settings,
       };
 
-      chrome.runtime.sendMessage(backgroundMessage).catch(() => {
+      chrome.runtime.sendMessage(backgroundMessage).catch((err) => {
         // Background script might not be ready - this is expected during extension lifecycle events.
+        console.debug('chrome.runtime.sendMessage failed (likely expected):', err);
       });
 
       this.updateStatus();
