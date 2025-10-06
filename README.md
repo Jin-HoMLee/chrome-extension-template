@@ -136,6 +136,25 @@ chrome-extension-template/
 └── README.md                # This file
 ```
 
+### 📁 Why manifest.json is in src/
+
+This template places `manifest.json` in the `src/` directory rather than the project root for several architectural reasons:
+
+**✅ Benefits of src/ placement:**
+- **Build Consistency**: All source files go through the same build pipeline
+- **Source Organization**: Keeps all extension source code in one location  
+- **Template Clarity**: Makes it obvious this is a "source" file that gets processed
+- **Modern Patterns**: Aligns with TypeScript/Webpack project conventions
+- **Development Flow**: Natural part of the watch/rebuild process
+
+**🔄 Alternative Approaches:**
+If you prefer the traditional root placement, simply:
+1. Move `src/manifest.json` → `manifest.json`  
+2. Update webpack.config.js copy path from `src/manifest.json` → `manifest.json`
+3. Both approaches work perfectly fine!
+
+The choice ultimately depends on your team's preferences and project conventions.
+
 ## 🎯 Key Components
 
 ### Background Service Worker
