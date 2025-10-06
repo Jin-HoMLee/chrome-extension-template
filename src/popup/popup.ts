@@ -310,7 +310,10 @@ Last Modified: ${info.lastModified}
          * Content script might not be loaded on special pages (e.g., chrome://, extension pages)
          * or during page navigation; this is expected and can be safely ignored.
          */
-        chrome.tabs.sendMessage(this.currentTab.id, settingsMessage).catch(() => {});
+        chrome.tabs.sendMessage(this.currentTab.id, settingsMessage).catch((err) => {
+          // Expected error: content script not loaded or page navigation. See comment above.
+          console.debug('chrome.tabs.sendMessage failed (likely expected):', err);
+        });
       }
 
       const backgroundMessage = {
