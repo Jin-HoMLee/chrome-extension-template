@@ -168,7 +168,7 @@ Located in `src/background/background.ts`, handles:
 ### Content Scripts
 Located in `src/content/content.ts`, provides:
 - DOM interaction and manipulation
-- Text highlighting functionality
+- Text highlighting functionality (using modern CSS Custom Highlight API - requires Chrome 105+, Firefox 113+)
 - Page information extraction
 - Keyboard shortcuts
 - Dynamic content handling with efficient mutation observer

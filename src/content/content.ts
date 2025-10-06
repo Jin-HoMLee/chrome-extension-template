@@ -168,7 +168,9 @@ class ContentScript {
       }
     }
     
-    // Apply the highlight using CSS Highlights API with proper type safety
+    // Apply the highlight using CSS Highlights API (Chrome 105+, Firefox 113+)
+    // Note: This feature requires modern browser support. In unsupported browsers,
+    // highlighting will gracefully fail without affecting other functionality.
     if (ranges.length > 0 && this.isCSSHighlightsSupported()) {
       const highlight = new Highlight(...ranges);
       CSS.highlights.set('extension-highlight', highlight);
